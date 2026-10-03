@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>اشتراک‌گذاری موقعیت</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:600px;margin:60px auto;padding:20px;text-align:center}
+    button{font-size:18px;padding:12px 22px;cursor:pointer}
+    #result{margin-top:25px;word-break:break-word}
+  </style>
+</head>
+<body>
+  <h2>اشتراک‌گذاری موقعیت</h2>
+  <p>با زدن دکمه، مرورگر از شما اجازه دسترسی به موقعیت مکانی می‌خواهد.</p>
+  <button id="locate">اجازه می‌دهم و موقعیتم را نمایش بده</button>
+  <div id="result"></div>
+
+<script>
+document.getElementById('locate').addEventListener('click', () => {
+  const result = document.getElementById('result');
+
+  if (!navigator.geolocation) {
+    result.textContent = 'مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.';
+    return;
+  }
+
+  result.textContent = 'در حال دریافت موقعیت...';
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      const accuracy = Math.round(pos.coords.accuracy);
+
+      result.innerHTML =
+        'موقعیت با رضایت شما دریافت شد.<br>' +
+        `عرض جغرافیایی: ${lat}<br>` +
+        `طول جغرافیایی: ${lon}<br>` +
+        `دقت تقریبی: ${accuracy} متر<br><br>` +
+        `<a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${lat},${lon}">باز کردن در Google Maps</a>`;
+    },
+    (err) => {
+      const messages = {
+        1: 'اجازه دسترسی به موقعیت داده نشد.',
+        2: 'موقعیت قابل دریافت نیست.',
+        3: 'دریافت موقعیت بیش از حد طول کشید.'
+      };
+      result.textContent = messages[err.code] || 'خطایی رخ داد.';
+    },
+    {enableHighAccuracy:true, timeout:15000, maximumAge:0}
+  );
+});
+</script>
+</body>
+</html>
